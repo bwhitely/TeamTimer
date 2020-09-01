@@ -198,6 +198,41 @@
         return [hours, minutes, seconds];
     }
 
+    /* Accepts the partial id (string) of the timer as input, e.g for total time it's '#totalTime',
+     for total time remaining it's '#globalCountdown', and for task time, it's '#taskCountdown'
+     There is no need to enter in the full id (Hrs, Mins or Secs) in the string, just the general id 
+     of the timer. It resets the chosen timer to default values. */
+
+    function resetTimerText(id) {
+        $(id + "Hrs").text("00");
+        $(id + "Mins").text("00");
+        $(id + "Secs").text("00");
+    }
+
+    /* Same deal as resetTimerText(), this also requires secondsRemaining for whichever timer's id
+     is being passed into function, it simply updates the timer on UI with the correct formatting */
+
+    function updateTimerText(id, secondsRemaining) {
+        const hms = toHMS(secondsRemaining);
+        const [hoursRemaining, minsRemaining, secsRemaining] = hms;
+
+        if (hoursRemaining < 10) {
+            $(id + "Hrs").text("0" + hoursRemaining);
+        } else {
+            $(id + "Hrs").text(hoursRemaining);
+        }
+        if (minsRemaining < 10) {
+            $(id + "Mins").text("0" + minsRemaining);
+        } else {
+            $(id + "Mins").text(minsRemaining);
+        }
+        if (secsRemaining < 10) {
+            $(id + "Secs").text("0" + secsRemaining);
+        } else {
+            $(id + "Secs").text(secsRemaining);
+        }
+    }
+
 </script>
 </body>
 
