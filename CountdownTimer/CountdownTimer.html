@@ -7,7 +7,7 @@
     <link href="Content/bootstrap.css" rel="stylesheet" />
     <link href="Content/Site.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Raleway" />
-    
+
     <script src="Scripts/jquery-3.5.1.js"></script>
     <script src="Scripts/popper.js"></script>
     <script src="Scripts/bootstrap.js"></script>
@@ -16,6 +16,84 @@
 </head>
 
 <body>
+    <nav class="navbar">
+        <span class="navbar-brand"><strong>TeamTime</strong></span>
+    </nav>
+    <div class="container-fluid" id="main">
+        <div class="row">
+            <!-- timer div -->
+            <div class="col-7" id="timer">
+                <div>
+                    <h2 class="text-center">Timer</h2>
+                </div>
+                <div class="body-content">
+                    <!-- total timer: the total of all sub-tasks -->
+                    <div class="row" id="totalTime" style="justify-content: center">
+                        <h6>Total Time</h6>
+                        <h4 class="form-text text-muted">H</h4>
+                        <h3 id="totalTimeHrs">00</h3>
+                        <h4 class="form-text text-muted">M</h4>
+                        <h3 id="totalTimeMins">00</h3>
+                        <h4 class="form-text text-muted">S</h4>
+                        <h3 id="totalTimeSecs">00</h3>
+                    </div>
+                    <!-- Total time countdown-->
+                    <div class="row" id="globalCountdown" style="justify-content: center">
+                        <h6>Total Remaining</h6>
+                        <h4 class="form-text text-muted">H</h4>
+                        <h3 id="globalCountdownHrs">00</h3>
+                        <h4 class="form-text text-muted">M</h4>
+                        <h3 id="globalCountdownMins">00</h3>
+                        <h4 class="form-text text-muted">S</h4>
+                        <h3 id="globalCountdownSecs">00</h3>
+                    </div>
+                    <!-- Task Time countdown-->
+                    <div class="row" id="taskCountdown" style="justify-content: center">
+                        <h6>Task Time</h6>
+                        <h4 class="form-text text-muted">H</h4>
+                        <h3 id="taskCountdownHrs">00</h3>
+                        <h4 class="form-text text-muted">M</h4>
+                        <h3 id="taskCountdownMins">00</h3>
+                        <h4 class="form-text text-muted">S</h4>
+                        <h3 id="taskCountdownSecs">00</h3>
+                    </div>
+                    <!-- Timer Buttons -->
+                    <div class="row" style="justify-content: center" id="timerButtons">
+                        <button type="button" id="start">Start</button>
+                        <button type="button" id="pause">Pause</button>
+                        <button type="button" id="stop">Stop</button>
+                        <button type="button" id="clear">Clear</button>
+                    </div>
+                </div>
+                <!-- Task List -->
+                <div class="row">
+                    <ol id="timerTaskList" style="width: 100%">
+                    </ol>
+                </div>
+            </div>
+            <!-- Configure div -->
+            <div class="col-3" id="settings">
+                <div>
+                    <h2 class="text-center">Configure</h2>
+                </div>
+                <div class="body-content">
+                    <div class="form-group">
+                        <div>
+                            <small class="form-text text-muted"><strong>Enter a task name</strong></small>
+                            <input type="text" class="form-control" id="addTask" />
+                        </div>
+                        <div>
+                            <small class="form-text text-muted"><strong>Enter a task duration (minutes)</strong></small>
+                            <input type="number" class="form-control" id="addTaskDuration" />
+                        </div>
+                        <div style="text-align: center">
+                            <button id="task" style="margin-top: 15px">Add Task</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
     </script>
 </body>
