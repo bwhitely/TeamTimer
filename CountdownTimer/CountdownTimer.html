@@ -94,8 +94,25 @@
             </div>
         </div>
     </div>
-    <script>
-    </script>
+<script>
+
+    /* Accepts hours, minutes and seconds as an input , returns the time value in seconds) */ 
+
+    function toSeconds(hours, minutes, seconds) {
+        return (hours * 3600) + (minutes * 60) + seconds;
+    }
+
+    /* Accepts seconds as input and returns hours, minutes and seconds as an array where
+     [0] is hours, [1] is minutes, and [2] is seconds. */
+
+    function toHMS(totalSeconds) {
+        const hours = Math.floor((totalSeconds / 3600));
+        const minutes = Math.floor((totalSeconds / 60) % 60);
+        const seconds = Math.floor(totalSeconds % 60);
+        return [hours, minutes, seconds];
+    }
+
+</script>
 </body>
 
 </html>
