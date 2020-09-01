@@ -1,0 +1,85 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    font-family: 'Raleway';
+}
+
+nav {
+    border: solid 1px;
+    margin-bottom: 5px;
+}
+
+/* Main content */
+.main {
+    margin-top: 30px; /* Add a top margin to avoid content overlay */
+}
+
+/* Set padding to keep content from hitting the edges */
+
+.body-content {
+    padding-top: 35px;
+    padding-left: 35px;
+    padding-right: 35px;
+    border: black;
+}
+
+div {
+    text-align: center;
+}
+
+h6 {
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+h3 {
+    padding-top: 10px;
+}
+
+small, h4 {
+    padding-top: 12px;
+}
+
+#row {
+}
+
+button, label {
+    display: inline-block;
+    padding: 0.46em 1.6em;
+    border: 0.1em solid #000000;
+    margin: 0 0.2em 0.2em 0;
+    border-radius: 0.12em;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Roboto',sans-serif;
+    font-weight: 300;
+    color: #000000;
+    text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
+    background-color: #FFFFFF;
+    text-align: center;
+    transition: all 0.15s;
+}
+
+    button:hover, label:hover {
+        text-shadow: 0 0 2em rgba(255,255,255,1);
+        color: #ffffff;
+        background-color: #000000;
+    }
+
+@media all and (max-width:30em) {
+    button, label {
+        display: block;
+        margin: 0.4em auto;
+    }
+}
+
+#col-5 {
+}
+
+#main {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+
