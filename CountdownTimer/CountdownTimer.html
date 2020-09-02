@@ -120,6 +120,7 @@
         //Event Handlers
         $("#task").on('click', function () { addTask($("#addTask").val(), $("#addTaskDuration").val()); });
         $("#start").on('click', start);
+        $("#pause").on('click', pause);
 
         //TIMER FUNCTIONS
 
@@ -173,6 +174,18 @@
                 taskSeconds = 0;
                 taskSecondsRemaining = 0;
             }
+        }
+
+        /* Pauses the timer */
+
+        function pause() {
+            if (paused || !started)
+                return;
+
+            clearInterval(myTimer);
+            paused = true;
+            document.getElementById("start").innerHTML = "Resume";
+            document.getElementById("start").disabled = false;
         }
 
         //TASK FUNCTIONS
