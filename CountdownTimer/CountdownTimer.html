@@ -94,146 +94,210 @@
             </div>
         </div>
     </div>
-<script>
+    <script>
 
-    //Global Variables
-    var globalSeconds = 0;
-    var globalSecondsCompleted = 0;
-    var globalSecondsRemaining = 0;
+        //back
 
-    var taskSeconds = 0;
-    var taskSecondsCompleted = 0;
-    var taskSecondsRemaining = 0;
+        //Global Variables
+        var myTimer;
 
-    var exportInfo = [];
-    var backupArray = [];
+        var globalSeconds = 0;
+        var globalSecondsCompleted = 0;
+        var globalSecondsRemaining = 0;
 
-    //Event Handlers
-    $("#task").on('click', function () { addTask($("#addTask").val(), $("#addTaskDuration").val()); });
+        var taskSeconds = 0;
+        var taskSecondsCompleted = 0;
+        var taskSecondsRemaining = 0;
 
-    //TASK FUNCTIONS
+        var taskTracker = 0;
 
-    /* Adds task input from text/number forms and adds <li> items accordingly.
-     Increments the global time variables every time a new task is added, 
-     and calls setTimerText() to increment the timer on the UI.
-     This function should only be called inside the onclick function for 
-     the add task button and from within parseCSV() */
+        var exportInfo = [];
+        var backupArray = [];
 
-    function addTask(task, minutes) {
-        //Add <h3> Sub Task title if one doesn't already exist.
-        if (!document.getElementById("currentTasks")) {
-            $('<h3>').addClass('text-center').attr('id', 'currentTasks').text("Sub Tasks").appendTo("#timerTaskList");
+        var paused = false;
+        var started = false;
+
+        //Event Handlers
+        $("#task").on('click', function () { addTask($("#addTask").val(), $("#addTaskDuration").val()); });
+        $("#start").on('click', start);
+
+        //TIMER FUNCTIONS
+
+        function start() {
+            document.getElementById("start").innerHTML = "Start";
+            this.disabled = true;
+            started = true;
+            paused = false;
+
+            myTimer = setInterval(timer, 10);
         }
 
-        globalSeconds += minutes * 60;
-        globalSecondsRemaining += minutes * 60;
+        /* Contains the core logic for the timer, and tracks the status of sub-tasks */
 
-        //Update task time-tracking variables if this is the first task to be entered.
-        if (document.getElementsByTagName('li').length === 0) {
-            taskSeconds = minutes * 60;
-            taskSecondsRemaining = taskSeconds;
+        function timer() {
+            const currentTask = document.getElementsByTagName('li')[taskTracker];
+            const nextTask = document.getElementsByTagName('li')[taskTracker + 1];
+
+            if (typeof (currentTask) != "undefined") {
+                currentTask.setAttribute('active', 'true');
+            }
+
+            globalSecondsCompleted++;
+            globalSecondsRemaining--;
+            taskSecondsCompleted++;
+            taskSecondsRemaining--;
+
+            //Completed task
+            if (currentTask.getAttribute('minutes') * 60 === taskSecondsCompleted) {
+                currentTask.setAttribute('complete', 'true');
+                currentTask.setAttribute('active', 'false');
+                currentTask.textContent += ": Complete";
+                taskSecondsCompleted = 0;
+                taskTracker++;
+
+                //Sets the task timer to the next task (if there is one)
+                if (typeof (nextTask) != "undefined") {
+                    taskSeconds = nextTask.getAttribute('minutes') * 60;
+                    taskSecondsRemaining = taskSeconds;
+                }
+            }
+
+            updateTimerText("#globalCountdown", globalSecondsRemaining);
+            updateTimerText("#taskCountdown", taskSecondsRemaining);
+
+            //All tasks completed
+            if (globalSecondsRemaining <= 0) {
+                clearInterval(myTimer);
+                document.getElementById("start").disabled = false;
+                started = false;
+                taskSeconds = 0;
+                taskSecondsRemaining = 0;
+            }
         }
 
-        //Add to export CSV array
-        exportInfo.push([task, minutes]);
-        backupArray.push([task, minutes]);
+        //TASK FUNCTIONS
 
-        //Append to 'timerTaskList'.
-        $('<li>').addClass('list-group-item list-group-item-action')
-            .attr('id', 'listItem')
-            .text("Task: " + task + " " + minutes + " minutes").attr('draggable', 'true')
-            .attr('minutes', minutes).attr('complete', 'false').attr('active', 'false')
-            .appendTo("#timerTaskList");
+        /* Adds task input from text/number forms and adds <li> items accordingly.
+         Increments the global time variables every time a new task is added,
+         and calls setTimerText() to increment the timer on the UI.
+         This function should only be called inside the onclick function for
+         the add task button and from within parseCSV() */
 
-        $("#addTask").val("");
-        $("#addTaskDuration").val(0);
+        function addTask(task, minutes) {
+            //Add <h3> Sub Task title if one doesn't already exist.
+            if (!document.getElementById("currentTasks")) {
+                $('<h3>').addClass('text-center').attr('id', 'currentTasks').text("Sub Tasks").appendTo("#timerTaskList");
+            }
 
-        setTimerText("#totalTime", globalSeconds);
-        setTimerText("#globalCountdown", globalSecondsRemaining);
+            globalSeconds += minutes * 60;
+            globalSecondsRemaining += minutes * 60;
 
-        //Instantiate the task countdown timer if this is the first task.
-        if (document.getElementsByTagName('li').length === 1) {
-            setTimerText("#taskCountdown", taskSecondsRemaining);
+            //Update task time-tracking variables if this is the first task to be entered.
+            if (document.getElementsByTagName('li').length === 0) {
+                taskSeconds = minutes * 60;
+                taskSecondsRemaining = taskSeconds;
+            }
+
+            //Add to export CSV array
+            exportInfo.push([task, minutes]);
+            backupArray.push([task, minutes]);
+
+            //Append to 'timerTaskList'.
+            $('<li>').addClass('list-group-item list-group-item-action')
+                .attr('id', 'listItem')
+                .text("Task: " + task + " " + minutes + " minutes").attr('draggable', 'true')
+                .attr('minutes', minutes).attr('complete', 'false').attr('active', 'false')
+                .appendTo("#timerTaskList");
+
+            $("#addTask").val("");
+            $("#addTaskDuration").val(0);
+
+            setTimerText("#totalTime", globalSeconds);
+            setTimerText("#globalCountdown", globalSecondsRemaining);
+
+            //Instantiate the task countdown timer if this is the first task.
+            if (document.getElementsByTagName('li').length === 1) {
+                setTimerText("#taskCountdown", taskSecondsRemaining);
+            }
         }
-    }
 
-    /* Takes the id of the timer as an input, as well as the seconds remaining for that particular timer,
-     and sets/updates the time displayed to the user.
-     There should be no reason to call this function outside of addTask() */
+        /* Takes the id of the timer as an input, as well as the seconds remaining for that particular timer,
+         and sets/updates the time displayed to the user.
+         There should be no reason to call this function outside of addTask() */
 
-    function setTimerText(id, secondsRemaining) {
+        function setTimerText(id, secondsRemaining) {
 
-        const hms = toHMS(secondsRemaining);
-        let [hours, minutes, seconds] = hms;
+            const hms = toHMS(secondsRemaining);
+            let [hours, minutes, seconds] = hms;
 
-        if (hours < 10) {
-            hours = "0" + hours;
+            if (hours < 10) {
+                hours = "0" + hours;
+            }
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+
+            $(id + "Hrs").text(hours);
+            $(id + "Mins").text(minutes);
+            $(id + "Secs").text(seconds);
         }
-        if (minutes < 10) {
-            minutes = "0" + minutes;
+
+
+        //UTILITY FUNCTIONS
+
+        /* Accepts hours, minutes and seconds as an input , returns the time value in seconds) */
+        function toSeconds(hours, minutes, seconds) {
+            return (hours * 3600) + (minutes * 60) + seconds;
         }
-        if (seconds < 10) {
-            seconds = "0" + seconds;
+
+        /* Accepts seconds as input and returns hours, minutes and seconds as an array where
+         [0] is hours, [1] is minutes, and [2] is seconds. */
+        function toHMS(totalSeconds) {
+            const hours = Math.floor((totalSeconds / 3600));
+            const minutes = Math.floor((totalSeconds / 60) % 60);
+            const seconds = Math.floor(totalSeconds % 60);
+            return [hours, minutes, seconds];
         }
 
-        $(id + "Hrs").text(hours);
-        $(id + "Mins").text(minutes);
-        $(id + "Secs").text(seconds);
-    }
+        /* Accepts the partial id (string) of the timer as input, e.g for total time it's '#totalTime',
+         for total time remaining it's '#globalCountdown', and for task time, it's '#taskCountdown'
+         There is no need to enter in the full id (Hrs, Mins or Secs) in the string, just the general id
+         of the timer. It resets the chosen timer to default values. */
 
-
-    //UTILITY FUNCTIONS
-
-    /* Accepts hours, minutes and seconds as an input , returns the time value in seconds) */
-    function toSeconds(hours, minutes, seconds) {
-        return (hours * 3600) + (minutes * 60) + seconds;
-    }
-
-    /* Accepts seconds as input and returns hours, minutes and seconds as an array where
-     [0] is hours, [1] is minutes, and [2] is seconds. */
-    function toHMS(totalSeconds) {
-        const hours = Math.floor((totalSeconds / 3600));
-        const minutes = Math.floor((totalSeconds / 60) % 60);
-        const seconds = Math.floor(totalSeconds % 60);
-        return [hours, minutes, seconds];
-    }
-
-    /* Accepts the partial id (string) of the timer as input, e.g for total time it's '#totalTime',
-     for total time remaining it's '#globalCountdown', and for task time, it's '#taskCountdown'
-     There is no need to enter in the full id (Hrs, Mins or Secs) in the string, just the general id 
-     of the timer. It resets the chosen timer to default values. */
-
-    function resetTimerText(id) {
-        $(id + "Hrs").text("00");
-        $(id + "Mins").text("00");
-        $(id + "Secs").text("00");
-    }
-
-    /* Same deal as resetTimerText(), this also requires secondsRemaining for whichever timer's id
-     is being passed into function, it simply updates the timer on UI with the correct formatting */
-
-    function updateTimerText(id, secondsRemaining) {
-        const hms = toHMS(secondsRemaining);
-        const [hoursRemaining, minsRemaining, secsRemaining] = hms;
-
-        if (hoursRemaining < 10) {
-            $(id + "Hrs").text("0" + hoursRemaining);
-        } else {
-            $(id + "Hrs").text(hoursRemaining);
+        function resetTimerText(id) {
+            $(id + "Hrs").text("00");
+            $(id + "Mins").text("00");
+            $(id + "Secs").text("00");
         }
-        if (minsRemaining < 10) {
-            $(id + "Mins").text("0" + minsRemaining);
-        } else {
-            $(id + "Mins").text(minsRemaining);
-        }
-        if (secsRemaining < 10) {
-            $(id + "Secs").text("0" + secsRemaining);
-        } else {
-            $(id + "Secs").text(secsRemaining);
-        }
-    }
 
-</script>
+        /* Same deal as resetTimerText(), this also requires secondsRemaining for whichever timer's id
+         is being passed into function, it simply updates the timer on UI with the correct formatting */
+
+        function updateTimerText(id, secondsRemaining) {
+            const hms = toHMS(secondsRemaining);
+            const [hoursRemaining, minsRemaining, secsRemaining] = hms;
+
+            if (hoursRemaining < 10) {
+                $(id + "Hrs").text("0" + hoursRemaining);
+            } else {
+                $(id + "Hrs").text(hoursRemaining);
+            }
+            if (minsRemaining < 10) {
+                $(id + "Mins").text("0" + minsRemaining);
+            } else {
+                $(id + "Mins").text(minsRemaining);
+            }
+            if (secsRemaining < 10) {
+                $(id + "Secs").text("0" + secsRemaining);
+            } else {
+                $(id + "Secs").text(secsRemaining);
+            }
+        }
+
+    </script>
 </body>
 
 </html>
