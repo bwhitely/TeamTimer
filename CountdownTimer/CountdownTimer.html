@@ -134,6 +134,7 @@
         //CSV
         var input = document.querySelector('input[type="file"]');
         input.addEventListener('change', importCSV);
+        $("#exportToCSV").on('click', exportCSV);
 
         //TIMER FUNCTIONS
 
@@ -315,7 +316,7 @@
                     let i = 0;
 
                     while (true) {
-                        if (typeof(taskList[i]) === "undefined") {
+                        if (typeof (taskList[i]) === "undefined") {
                             break;
                         }
                         if (taskList[i].getAttribute('complete') === 'false') {
@@ -396,6 +397,36 @@
                     addTask(dataArray[i], dataArray[i + 1]);
                 }
             });
+        }
+
+        /* exportCSV() gathers the current CSV cache and downloads a CSV file with the appropriate data. */
+
+        function exportCSV() {
+            // if csv info is empty, dont download
+            if (exportInfo.length === 0) {
+                // show alert
+                $("#emptyCSVAlert").addClass('show');
+                // auto close alert
+                $("#emptyCSVAlert").fadeTo(2000, 500).slideUp(500,
+                    function () {
+                        $("#ClearCSVAlert").slideUp(500);
+                    });
+            } else {
+                // csv string to build upon, starts with title
+                let csv = "placeholder,taskName,minutes\n";
+                // for each, join each arr row with a comma and end with a new line
+                exportInfo.forEach(function (row) {
+                    csv += row.join(',');
+                    csv += "\n";
+                });
+
+                // create download link for csv file
+                var hiddenElement = document.createElement('a');
+                hiddenElement.href = 'data:text/csv;charset=utf-8' + encodeURI(csv);
+                hiddenElement.target = "_blank";
+                hiddenElement.download = 'data.csv';
+                hiddenElement.click();
+            }
         }
 
 
