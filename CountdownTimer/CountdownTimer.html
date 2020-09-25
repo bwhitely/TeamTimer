@@ -127,6 +127,7 @@
         //TIMER FUNCTIONS
 
         function start() {
+            //Prevent start from executed if there are no tasks or all tasks are already complete.
             if (globalSecondsRemaining === 0)
                 return;
 
@@ -260,40 +261,45 @@
          the add task button and from within parseCSV() */
 
         function addTask(task, minutes) {
-            //Add <h3> Sub Task title if one doesn't already exist.
-            if (!document.getElementById("currentTasks")) {
-                $('<h3>').addClass('text-center').attr('id', 'currentTasks').text("Sub Tasks").appendTo("#timerTaskList");
-            }
+            // input check
+            if (IsNullOrWhiteSpace(task) || IsNullOrWhiteSpace(minutes) || minutes === '0') {
+                window.alert("You cannot have an empty task name or duration.");
+            } else {
+                //Add <h3> Sub Task title if one doesn't already exist.
+                if (!document.getElementById("currentTasks")) {
+                    $('<h3>').addClass('text-center').attr('id', 'currentTasks').text("Sub Tasks").appendTo("#timerTaskList");
+                }
 
-            globalSeconds += minutes * 60;
-            globalSecondsRemaining += minutes * 60;
+                globalSeconds += minutes * 60;
+                globalSecondsRemaining += minutes * 60;
 
-            //Update task time-tracking variables if this is the first task to be entered.
-            if (document.getElementsByTagName('li').length === 0) {
-                taskSeconds = minutes * 60;
-                taskSecondsRemaining = taskSeconds;
-            }
+                //Update task time-tracking variables if this is the first task to be entered.
+                if (document.getElementsByTagName('li').length === 0) {
+                    taskSeconds = minutes * 60;
+                    taskSecondsRemaining = taskSeconds;
+                }
 
-            //Add to export CSV array
-            exportInfo.push([task, minutes]);
-            backupArray.push([task, minutes]);
+                //Export to CSV array
+                exportInfo.push([task, minutes]);
+                backupArray.push([task, minutes]);
 
-            //Append to 'timerTaskList'.
-            $('<li>').addClass('list-group-item list-group-item-action')
-                .attr('id', 'listItem')
-                .text("Task: " + task + " " + minutes + " minutes").attr('draggable', 'true')
-                .attr('minutes', minutes).attr('complete', 'false').attr('active', 'false')
-                .appendTo("#timerTaskList");
+                //Append to 'timerTaskList'.
+                $('<li>').addClass('list-group-item list-group-item-action')
+                    .attr('id', 'listItem')
+                    .text("Task: " + task + " " + minutes + " minutes").attr('draggable', 'true')
+                    .attr('minutes', minutes).attr('complete', 'false').attr('active', 'false')
+                    .appendTo("#timerTaskList");
 
-            $("#addTask").val("");
-            $("#addTaskDuration").val(0);
+                $("#addTask").val("");
+                $("#addTaskDuration").val(0);
 
-            setTimerText("#totalTime", globalSeconds);
-            setTimerText("#globalCountdown", globalSecondsRemaining);
+                setTimerText("#totalTime", globalSeconds);
+                setTimerText("#globalCountdown", globalSecondsRemaining);
 
-            //Instantiate the task countdown timer if this is the first task.
-            if (document.getElementsByTagName('li').length === 1) {
-                setTimerText("#taskCountdown", taskSecondsRemaining);
+                //Instantiate the task countdown timer if this is the first task.
+                if (document.getElementsByTagName('li').length === 1) {
+                    setTimerText("#taskCountdown", taskSecondsRemaining);
+                }
             }
         }
 
@@ -371,6 +377,12 @@
             } else {
                 $(id + "Secs").text(secsRemaining);
             }
+        }
+
+        function IsNullOrWhiteSpace(value) {
+            if (value == null)
+                return true;
+            return value.replace(/\s/g, '').length === 0;
         }
 
     </script>
