@@ -121,6 +121,8 @@
         $("#task").on('click', function () { addTask($("#addTask").val(), $("#addTaskDuration").val()); });
         $("#start").on('click', start);
         $("#pause").on('click', pause);
+        $("#stop").on('click', stop);
+        $("#clear").on('click', clear);
 
         //TIMER FUNCTIONS
 
@@ -186,6 +188,64 @@
             paused = true;
             document.getElementById("start").innerHTML = "Resume";
             document.getElementById("start").disabled = false;
+        }
+
+        /* Resets the timer to default values without deleting any tasks */
+
+        function stop() {
+
+            clearInterval(myTimer);
+
+            paused = false;
+            started = false;
+            globalSecondsCompleted = 0;
+            globalSecondsRemaining = globalSeconds;
+            taskSeconds = 0;
+            taskSecondsCompleted = 0;
+            taskSecondsRemaining = 0;
+            taskTracker = 0;
+
+            document.getElementById("start").innerHTML = "Start";
+
+            //This block of code doesn't execute when this method is called inside clear().
+            //Resets all tasks to display as incomplete and resets the task timer.
+            if (this === document.getElementById("stop")) {
+                const taskList = document.getElementsByTagName('li');
+                $.each(taskList, function (i) {
+
+                    if (i === 0 && typeof (taskList[0]) != "undefined") {
+                        taskSeconds = taskList[0].getAttribute('minutes') * 60;
+                        taskSecondsRemaining = taskSeconds;
+                    }
+                    if (taskList[i].getAttribute('complete') === 'true') {
+                        taskList[i].setAttribute('complete', 'false');
+                    }
+                    if (taskList[i].getAttribute('active') === 'true') {
+                        taskList[i].setAttribute('active', 'false');
+                    }
+                    taskList[i].textContent = "Task: " + exportInfo[i][0] + " " + exportInfo[i][1] + " minutes";
+                });
+                updateTimerText("#globalCountdown", globalSecondsRemaining);
+                updateTimerText("#taskCountdown", taskSecondsRemaining);
+            }
+            document.getElementById("start").disabled = false;
+        }
+
+        /* Hard reset for the entire app (timer and all tasks) */
+
+        function clear() {
+            stop();
+
+            globalSeconds = 0;
+            globalSecondsRemaining = 0;
+            exportInfo = [];
+            backupArray = [];
+
+            $("#timerTaskList").empty();
+
+            resetTimerText("#totalTime");
+            resetTimerText("#globalCountdown");
+            resetTimerText("#taskCountdown");
         }
 
         //TASK FUNCTIONS
