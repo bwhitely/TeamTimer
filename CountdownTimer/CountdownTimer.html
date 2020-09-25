@@ -293,6 +293,26 @@
                 $("#addTask").val("");
                 $("#addTaskDuration").val(0);
 
+                //Fixes a bug that occurs in the task timer when all tasks are finished, then new one(s) added, and start is pressed.
+                if (taskSeconds === 0 && globalSecondsRemaining != 0) {
+
+                    const taskList = document.getElementsByTagName('li');
+                    let i = 0;
+
+                    while (true) {
+                        if (typeof(taskList[i]) === "undefined") {
+                            break;
+                        }
+                        if (taskList[i].getAttribute('complete') === 'false') {
+                            taskSeconds = taskList[i].getAttribute('minutes') * 60;
+                            taskSecondsRemaining = taskSeconds;
+                            //Fixes a visual bug that occurs in the same context, and prevents the timer from displaying this task.
+                            setTimerText("#taskCountdown", taskSecondsRemaining);
+                            break;
+                        }
+                        i++;
+                    }
+                }
                 setTimerText("#totalTime", globalSeconds);
                 setTimerText("#globalCountdown", globalSecondsRemaining);
 
