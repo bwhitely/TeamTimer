@@ -89,6 +89,12 @@
                         <div style="text-align: center">
                             <button id="task" style="margin-top: 15px">Add Task</button>
                         </div>
+                        <div id="csvDiv">
+                            <br />
+                            <button id="exportToCSV">Export CSV</button>
+                            <input type="file" name="importCSV" id="importCSV" accept=".csv" hidden />
+                            <label for="importCSV" id="importLabel">Import CSV</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -118,11 +124,16 @@
         var started = false;
 
         //Event Handlers
+        //Task/Timer
         $("#task").on('click', function () { addTask($("#addTask").val(), $("#addTaskDuration").val()); });
         $("#start").on('click', start);
         $("#pause").on('click', pause);
         $("#stop").on('click', stop);
         $("#clear").on('click', clear);
+
+        //CSV
+        var input = document.querySelector('input[type="file"]');
+        input.addEventListener('change', importCSV);
 
         //TIMER FUNCTIONS
 
@@ -250,6 +261,10 @@
             resetTimerText("#totalTime");
             resetTimerText("#globalCountdown");
             resetTimerText("#taskCountdown");
+
+            if (document.querySelector('input[type="file"]') != null) {
+                document.getElementById("importCSV").value = "";
+            }
         }
 
         //TASK FUNCTIONS
@@ -345,6 +360,42 @@
             $(id + "Hrs").text(hours);
             $(id + "Mins").text(minutes);
             $(id + "Secs").text(seconds);
+        }
+
+        //CSV FUNCTIONS
+
+        /* Imports the CSV file provided by the user, which is then passed onto parseCSV() */
+
+        function importCSV() {
+            const reader = new FileReader();
+            const input = document.querySelector('input[type="file"]');
+
+            reader.readAsText(input.files[0]);
+            reader.onload = function () {
+                parseCSV(reader.result);
+            }
+        }
+
+        /* Parses the imported CSV file passed on by importCSV(), calls addTask(task, minutes) for each task
+         specified in the CSV file */
+
+        function parseCSV(data) {
+            // Add <h3> Sub Task title if one doesn't already exist.
+            if (!document.getElementById("currentTasks")) {
+                $('<h3>').addClass('text-center').attr('id', 'currentTasks').text("Sub Tasks").appendTo("#timerTaskList");
+            }
+
+            //Split the string, store in array, pop the last element (empty string), and splice the first two elements (headers).
+            const dataArray = data.replace(/\n/g, ",").split(",");
+            dataArray.pop();
+            dataArray.splice(0, 2);
+
+            //Store the data in arrays and add to task list.
+            $.each(dataArray, function (i) {
+                if (i % 2 === 0) {
+                    addTask(dataArray[i], dataArray[i + 1]);
+                }
+            });
         }
 
 
