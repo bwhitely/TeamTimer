@@ -127,6 +127,9 @@
         //TIMER FUNCTIONS
 
         function start() {
+            if (globalSecondsRemaining === 0)
+                return;
+
             document.getElementById("start").innerHTML = "Start";
             this.disabled = true;
             started = true;
