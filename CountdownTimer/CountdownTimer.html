@@ -144,7 +144,7 @@
             started = true;
             paused = false;
 
-            myTimer = setInterval(timer, 10);
+            myTimer = setInterval(timer, 1000);
         }
 
         /* Contains the core logic for the timer, and tracks the status of sub-tasks */
@@ -177,8 +177,7 @@
                 }
             }
 
-            //DEBUG1
-            setTimerText("#globalCountdown", globalSecondsRemaining);
+            setTimerText("#totalCountdown", globalSecondsRemaining);
             setTimerText("#taskCountdown", taskSecondsRemaining);
 
             //All tasks completed
@@ -238,8 +237,7 @@
                     }
                     taskList[i].textContent = "Task: " + exportInfo[i][0] + " " + exportInfo[i][1] + " minutes";
                 });
-                //DEBUG1
-                setTimerText("#globalCountdown", globalSecondsRemaining);
+                setTimerText("#totalCountdown", globalSecondsRemaining);
                 setTimerText("#taskCountdown", taskSecondsRemaining);
             }
             document.getElementById("start").disabled = false;
@@ -258,7 +256,7 @@
             $("#timerTaskList").empty();
 
             resetTimerText("#totalTime");
-            resetTimerText("#globalCountdown");
+            resetTimerText("#totalCountdown");
             resetTimerText("#taskCountdown");
 
             if (document.querySelector('input[type="file"]') != null) {
@@ -328,7 +326,7 @@
                     }
                 }
                 setTimerText("#totalTime", globalSeconds);
-                setTimerText("#globalCountdown", globalSecondsRemaining);
+                setTimerText("#totalCountdown", globalSecondsRemaining);
 
                 //Instantiate the task countdown timer if this is the first task.
                 if (document.getElementsByTagName('li').length === 1) {
@@ -337,9 +335,7 @@
             }
         }
 
-        /* Takes the id of the timer as an input, as well as the seconds remaining for that particular timer,
-         and sets/updates the time displayed to the user.
-         There should be no reason to call this function outside of addTask() */
+        /* Takes the id of the timer as an input, as well as the seconds remaining for that particular timer */
 
         function setTimerText(id, secondsRemaining) {
 
@@ -355,10 +351,7 @@
             if (seconds < 10) {
                 seconds = "0" + seconds;
             }
-
-            $(id + "Hrs").text(hours);
-            $(id + "Mins").text(minutes);
-            $(id + "Secs").text(seconds);
+            $(id).text(hours + ":" + minutes + ":" + seconds);
         }
 
         //CSV FUNCTIONS
@@ -444,39 +437,11 @@
             return [hours, minutes, seconds];
         }
 
-        /* Accepts the partial id (string) of the timer as input, e.g for total time it's '#totalTime',
-         for total time remaining it's '#globalCountdown', and for task time, it's '#taskCountdown'
-         There is no need to enter in the full id (Hrs, Mins or Secs) in the string, just the general id
-         of the timer. It resets the chosen timer to default values. */
+        /* Accepts the id (string) of the timer as input, e.g for total time it's '#totalTime',
+         for total time remaining it's '#totalCountdown', and for task time, it's '#taskCountdown' */
 
         function resetTimerText(id) {
-            $(id + "Hrs").text("00");
-            $(id + "Mins").text("00");
-            $(id + "Secs").text("00");
-        }
-
-        /* Same deal as resetTimerText(), this also requires secondsRemaining for whichever timer's id
-         is being passed into function, it simply updates the timer on UI with the correct formatting */
-
-        function updateTimerText(id, secondsRemaining) {
-            const hms = toHMS(secondsRemaining);
-            const [hoursRemaining, minsRemaining, secsRemaining] = hms;
-
-            if (hoursRemaining < 10) {
-                $(id + "Hrs").text("0" + hoursRemaining);
-            } else {
-                $(id + "Hrs").text(hoursRemaining);
-            }
-            if (minsRemaining < 10) {
-                $(id + "Mins").text("0" + minsRemaining);
-            } else {
-                $(id + "Mins").text(minsRemaining);
-            }
-            if (secsRemaining < 10) {
-                $(id + "Secs").text("0" + secsRemaining);
-            } else {
-                $(id + "Secs").text(secsRemaining);
-            }
+            $(id).text("00:00:00");
         }
 
         function IsNullOrWhiteSpace(value) {
