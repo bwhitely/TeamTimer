@@ -389,20 +389,13 @@
                     taskSecondsRemaining = taskSeconds;
                 }
 
-                //Export to CSV array
+                //Add to ExportCSV array
                 exportInfo.push([task, minutes]);
-                backupArray.push([task, minutes]);
 
                 //Append to 'timerTaskList'.
                 const listItem = $('<li>');
                 const div = $('<div>');
                 const icon = $('<p>');
-
-                //If the duration is a decimal value that is less than 1, add the 0 back to it.
-                if (minutes.charAt(0) === '.') {
-                    minutes = 0 + minutes;
-                    console.log('changed');
-                }
 
                 listItem.addClass('list-group-item').attr('id', 'listItem')
                     .attr('complete', 'false').attr('active', 'false')
@@ -412,8 +405,13 @@
                 $('<p>').addClass('list-text').css('font-size', 20).css('float', 'left').text(task).appendTo(div);
                 $('<i>').addClass("fas fa-stop").appendTo(icon);
                 icon.addClass('icon').css('color', 'orangered').css('float', 'right').css('margin-left', '20px').appendTo(div);
-                $('<p>').addClass('list-text').css('color', '#bfbfbf').css('float', 'right').text(minutes + " Minutes").appendTo(div);
+                $('<p>').addClass('list-text duration').css('color', '#bfbfbf').css('float', 'right').appendTo(div);
                 listItem.appendTo("#timerTaskList");
+
+                //Add time in HMS format to the task list.
+                const currentTask = document.getElementsByTagName('li')[document.getElementsByTagName('li').length -1];
+                const id = currentTask.querySelector('div').querySelector('.duration');
+                setTimerText(id, minutes * 60);
 
                 //Reset input text-box
                 $("#addTask").val("");
@@ -449,11 +447,13 @@
             }
         }
 
-        /* Takes the id of the timer as an input, as well as the seconds remaining for that particular timer */
+        /* Takes the id of the timer as an input, as well as the number of seconds to be converted into HMS format for a particular timer
+         and sets the text in HMS format.
+         The id parameter will accept any identifier to a unique, jQuery selectable object (must not be a collection of objects).*/
 
-        function setTimerText(id, secondsRemaining) {
+        function setTimerText(id, secs) {
 
-            const hms = toHMS(secondsRemaining);
+            const hms = toHMS(secs);
             let [hours, minutes, seconds] = hms;
 
             if (hours < 10) {
