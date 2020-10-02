@@ -59,7 +59,7 @@
                         <button type="button" id="clear"><i class="fa fa-times fa-lg"></i></button>
                     </div>
                 </div>
-                <!-- Configure div -->
+                <!-- Configuration div -->
                 <div class="row-cols-lg-2" id="settings" style="justify-content: center; margin-top: 25px">
                     <div class="body-content">
                         <div class="form-group">
@@ -176,6 +176,10 @@
                 currentTask.setAttribute('active', 'true');
             }
 
+            if (globalSeconds === globalSecondsRemaining && typeof (currentTask) != "undefined") {
+                currentTask.setAttribute('style', 'background-color:#404040 !important');
+            }
+
             globalSecondsCompleted++;
             globalSecondsRemaining--;
             taskSecondsCompleted++;
@@ -185,16 +189,20 @@
 
             //Completed task
             if (currentTask.getAttribute('minutes') * 60 === taskSecondsCompleted) {
+                currentTask.setAttribute('style', 'background-color: #1a1a1a !important');
+                currentTask.setAttribute('style', 'color: #a6a6a6 !important');
                 currentTask.setAttribute('complete', 'true');
                 currentTask.setAttribute('active', 'false');
-                currentTask.textContent += ": Complete";
+                currentTask.textContent += " - Complete";
                 taskSecondsCompleted = 0;
                 taskTracker++;
 
                 //Sets the task timer to the next task (if there is one)
                 if (typeof (nextTask) != "undefined") {
+                    nextTask.setAttribute('style', 'background-color:#404040 !important;');
                     taskSeconds = nextTask.getAttribute('minutes') * 60;
                     taskSecondsRemaining = taskSeconds;
+
                 }
             }
 
@@ -260,6 +268,8 @@
                         taskList[i].setAttribute('active', 'false');
                     }
                     taskList[i].textContent = "Task: " + exportInfo[i][0] + " " + exportInfo[i][1] + " minutes";
+                    taskList[i].setAttribute('style', 'background-color: #262626 !important');
+                    taskList[i].setAttribute('style', 'color: #d9d9d9 !important');
                 });
                 setTimerText("#totalCountdown", globalSecondsRemaining);
                 setTimerText("#taskCountdown", taskSecondsRemaining);
