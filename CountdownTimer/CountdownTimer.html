@@ -119,6 +119,8 @@
         var paused = false;
         var started = false;
 
+        const circumference = 2 * Math.PI * document.getElementById("circle").getAttribute('r');
+
         //Event Handlers
         //Task/Timer
         $("#task").on('click', function () { addTask($("#addTask").val(), $("#addTaskDuration").val()); });
@@ -133,6 +135,13 @@
         $("#exportToCSV").on('click', exportCSV);
 
         //TIMER FUNCTIONS
+        function animate() {
+            $('.circle_animation').css('stroke-dashoffset', circumference - ((taskSecondsCompleted) * (circumference / taskSeconds)));
+        }
+
+        function stopAnimation() {
+            $('.circle_animation').css('stroke-dashoffset', circumference);
+        }
 
         function start() {
             //Prevent start from executed if there are no tasks or all tasks are already complete.
@@ -161,6 +170,8 @@
             globalSecondsRemaining--;
             taskSecondsCompleted++;
             taskSecondsRemaining--;
+
+            animate();
 
             //Completed task
             if (currentTask.getAttribute('minutes') * 60 === taskSecondsCompleted) {
@@ -207,6 +218,8 @@
         function stop() {
 
             clearInterval(myTimer);
+
+            stopAnimation();
 
             paused = false;
             started = false;
