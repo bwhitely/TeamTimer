@@ -115,6 +115,13 @@ button, label {
         outline: none !important;
     }
 
+.pressed {
+    text-shadow: 0 0 2em rgba(255,255,255,1);
+    color: violet;
+    background-color: #0d0d0d;
+    outline: none !important;
+}
+
 @media all and (max-width:30em) {
     button, label {
         display: block;

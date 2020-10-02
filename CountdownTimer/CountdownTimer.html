@@ -135,28 +135,38 @@
         $("#exportToCSV").on('click', exportCSV);
 
         //TIMER FUNCTIONS
+
+        /* Animates the SVG circle based on the task time. */
+
         function animate() {
             $('.circle_animation').css('stroke-dashoffset', circumference - ((taskSecondsCompleted) * (circumference / taskSeconds)));
         }
+
+        /* Stops the animation and resets it to the default position. */
 
         function stopAnimation() {
             $('.circle_animation').css('stroke-dashoffset', circumference);
         }
 
+        /* Starts the clock, or resumes if it was paused. */
+
         function start() {
-            //Prevent start from executed if there are no tasks or all tasks are already complete.
+            //Prevent start from being executed if there are no tasks or all tasks are already complete.
             if (globalSecondsRemaining === 0)
                 return;
 
-            document.getElementById("start").innerHTML = "Start";
+            if (paused) {
+                document.getElementById("pause").classList.remove('pressed');
+            }
+
             this.disabled = true;
+            document.getElementById("start").classList.add('pressed');
             started = true;
             paused = false;
-
             myTimer = setInterval(timer, 1000);
         }
 
-        /* Contains the core logic for the timer, and tracks the status of sub-tasks */
+        /* Contains the core logic for the timer, and tracks the status of sub-tasks. */
 
         function timer() {
             const currentTask = document.getElementsByTagName('li')[taskTracker];
@@ -209,8 +219,9 @@
 
             clearInterval(myTimer);
             paused = true;
-            document.getElementById("start").innerHTML = "Resume";
             document.getElementById("start").disabled = false;
+            document.getElementById("start").classList.remove('pressed');
+            document.getElementById("pause").classList.add('pressed');
         }
 
         /* Resets the timer to default values without deleting any tasks */
@@ -218,7 +229,6 @@
         function stop() {
 
             clearInterval(myTimer);
-
             stopAnimation();
 
             paused = false;
@@ -230,7 +240,8 @@
             taskSecondsRemaining = 0;
             taskTracker = 0;
 
-            document.getElementById("start").innerHTML = "Start";
+            document.getElementById("start").classList.remove('pressed');
+            document.getElementById("pause").classList.remove('pressed');
 
             //This block of code doesn't execute when this method is called inside clear().
             //Resets all tasks to display as incomplete and resets the task timer.
@@ -286,9 +297,9 @@
          the add task button and from within parseCSV() */
 
         function addTask(task, minutes) {
-            // input check
+            //Input check
             if (IsNullOrWhiteSpace(task) || IsNullOrWhiteSpace(minutes) || minutes === '0') {
-                // Shows error message if task name or duration is empty.
+                //Shows error message if task name or duration is empty.
                 document.getElementById('alertText').textContent = "Empty name or duration.";
                 $("#alert").addClass('show').fadeTo(2000, 500).slideUp(500);
             } else {
