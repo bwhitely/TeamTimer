@@ -330,6 +330,33 @@
 
         //TASK FUNCTIONS
 
+        /* Validates user input for task name and duration, and displays the relevant error message if necessary. */
+
+        function isValidInput(task, minutes) {
+            //Input Validation with error notifications.
+            if (IsNullOrWhiteSpace(task)) {
+                document.getElementById('alertText').textContent = "Task name cannot be empty.";
+                $("#alert").addClass('show').css('color', 'orangered').fadeTo(2000, 500).slideUp(500);
+                return false;
+            }
+            if (task.length > 25) {
+                document.getElementById('alertText').textContent = "Task name must not exceed 25 characters.";
+                $("#alert").addClass('show').css('color', 'orangered').fadeTo(2000, 500).slideUp(500);
+                return false;
+            }
+            if (IsNullOrWhiteSpace(minutes)) {
+                document.getElementById('alertText').textContent = "Duration must be a valid number greater than 0.";
+                $("#alert").addClass('show').css('color', 'orangered').fadeTo(2000, 500).slideUp(500);
+                return false;
+            }
+            if (minutes > 5999) {
+                document.getElementById('alertText').textContent = "Duration must be less than 5999 minutes.";
+                $("#alert").addClass('show').css('color', 'orangered').fadeTo(2000, 500).slideUp(500);
+                return false;
+            }
+            return true;
+        }
+
         /* Adds task input from text/number forms and adds <li> items accordingly.
          Increments the global time variables every time a new task is added,
          and calls setTimerText() to increment the timer on the UI.
@@ -337,12 +364,10 @@
          the add task button and from within parseCSV() */
 
         function addTask(task, minutes) {
-            //Input check
-            if (IsNullOrWhiteSpace(task) || IsNullOrWhiteSpace(minutes) || minutes === '0') {
-                //Shows error message if task name or duration is empty.
-                document.getElementById('alertText').textContent = "Empty name or duration.";
-                $("#alert").addClass('show').fadeTo(2000, 500).slideUp(500);
-            } else {
+
+            minutes = removeLeadingZeros(minutes);
+
+            if (isValidInput(task, minutes)) {
                 // Add Task List title if one doesn't already exist.
                 if (!document.getElementById("currentTasks")) {
                     const container = $('<div>');
@@ -372,6 +397,12 @@
                 const listItem = $('<li>');
                 const div = $('<div>');
                 const icon = $('<p>');
+
+                //If the duration is a decimal value that is less than 1, add the 0 back to it.
+                if (minutes.charAt(0) === '.') {
+                    minutes = 0 + minutes;
+                    console.log('changed');
+                }
 
                 listItem.addClass('list-group-item').attr('id', 'listItem')
                     .attr('complete', 'false').attr('active', 'false')
@@ -452,7 +483,7 @@
             document.getElementById("importCSV").value = "";
             // Show importCSV success notification
             document.getElementById('alertText').textContent = "Imported CSV file.";
-            $("#alert").addClass('show').fadeTo(2000, 500).slideUp(500);
+            $("#alert").addClass('show').css('color', '#d9d9d9').fadeTo(2000, 500).slideUp(500);
         }
 
         /* Parses the imported CSV file passed on by importCSV(), calls addTask(task, minutes) for each task
@@ -479,7 +510,7 @@
             if (exportInfo.length === 0) {
                 //show empty CSV cache error.
                 document.getElementById('alertText').textContent = "Nothing to export!";
-                $("#alert").addClass('show').fadeTo(2000, 500).slideUp(500);
+                $("#alert").addClass('show').css('color', 'orangered').fadeTo(2000, 500).slideUp(500);
             } else {
                 // csv string to build upon, starts with title
                 let csv = "placeholder,taskName,minutes\n";
@@ -497,8 +528,8 @@
                 hiddenElement.click();
 
                 //Show exportCSV success notification.
-                document.getElementById('alertText').textContent = "Downloaded CSV file.";
-                $("#alert").addClass('show').fadeTo(2000, 500).slideUp(500);
+                document.getElementById('alertText').textContent = "Exported CSV file.";
+                $("#alert").addClass('show').css('color', '#d9d9d9').fadeTo(2000, 500).slideUp(500);
             }
         }
 
@@ -530,6 +561,10 @@
             if (value == null)
                 return true;
             return value.replace(/\s/g, '').length === 0;
+        }
+
+        function removeLeadingZeros(value) {
+            return value.replace(/^0+/, '');
         }
 
     </script>
