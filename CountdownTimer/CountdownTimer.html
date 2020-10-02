@@ -8,6 +8,9 @@
     <link href="Content/Site.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Raleway" />
 
+    <link href="Content/font-awesome.css" rel="stylesheet" />
+    <link href="Content/font-awesome.min.css" rel="stylesheet" />
+
     <script src="Scripts/jquery-3.5.1.js"></script>
     <script src="Scripts/popper.js"></script>
     <script src="Scripts/bootstrap.js"></script>
@@ -15,94 +18,87 @@
     <title>TeamTime</title>
 </head>
 
-<body>
+<body class="">
     <nav class="navbar">
         <span class="navbar-brand"><strong>TeamTime</strong></span>
     </nav>
     <div class="container-fluid" id="main">
         <div class="row">
+            <div class="col-1" id="placeholderDivToMoveOtherDivsRightLol">
+
+            </div>
             <!-- timer div -->
-            <div class="col-7" id="timer">
-                <div>
-                    <h2 class="text-center">Timer</h2>
-                </div>
+            <div class="col-6" id="timer">
                 <div class="body-content">
-                    <!-- total timer: the total of all sub-tasks -->
-                    <div class="row" id="totalTime" style="justify-content: center">
-                        <h6>Total Time</h6>
-                        <h4 class="form-text text-muted">H</h4>
-                        <h3 id="totalTimeHrs">00</h3>
-                        <h4 class="form-text text-muted">M</h4>
-                        <h3 id="totalTimeMins">00</h3>
-                        <h4 class="form-text text-muted">S</h4>
-                        <h3 id="totalTimeSecs">00</h3>
-                    </div>
-                    <!-- Total time countdown-->
-                    <div class="row" id="globalCountdown" style="justify-content: center">
-                        <h6>Total Remaining</h6>
-                        <h4 class="form-text text-muted">H</h4>
-                        <h3 id="globalCountdownHrs">00</h3>
-                        <h4 class="form-text text-muted">M</h4>
-                        <h3 id="globalCountdownMins">00</h3>
-                        <h4 class="form-text text-muted">S</h4>
-                        <h3 id="globalCountdownSecs">00</h3>
-                    </div>
-                    <!-- Task Time countdown-->
-                    <div class="row" id="taskCountdown" style="justify-content: center">
-                        <h6>Task Time</h6>
-                        <h4 class="form-text text-muted">H</h4>
-                        <h3 id="taskCountdownHrs">00</h3>
-                        <h4 class="form-text text-muted">M</h4>
-                        <h3 id="taskCountdownMins">00</h3>
-                        <h4 class="form-text text-muted">S</h4>
-                        <h3 id="taskCountdownSecs">00</h3>
-                    </div>
+
+                    <!-- SVG ANIMATION -->
+                    <svg width="330" height="330">
+                        <g>
+                            <!-- inner/outer lines set to fill="none" currently so you wont see them -->
+                            <!--outer circle -->
+                            <circle cx="164" cy="164" r="148" stroke-width="5" fill="transparent" stroke="cyan" opacity=".8"></circle>
+                            <!-- animation stroke-->
+                            <circle id="circle" class="circle_animation" r="137.76" cx="164" cy="164" stroke-width="16" stroke="#fc00ff" fill="transparent" opacity=".8"></circle>
+                            <!-- inner circle -->
+                            <circle cx="164" cy="164" r="128" stroke-width="5" fill="transparent" stroke="cyan" opacity=".8"></circle>
+                            <!-- task remaining timer -->
+                            <text id="taskCountdown" x="65" y="40" fill="transparent" transform="rotate(90,90,90)" font-size="50" style="fill: white">00:00:00</text>
+                            <!-- total timer-->
+                            <text x="95" y="70" transform="rotate(90,90,90)" font-size="8" style="fill: #d9d9d9">Total Time</text>
+                            <text id="totalTime" x="80" y="87" fill="transparent" transform="rotate(90,90,90)" font-size="15" style="fill: white">00:00:00</text>
+                            <!-- total remaining timer -->
+                            <text x="195" y="70" transform="rotate(90,90,90)" font-size="8" style="fill:#d9d9d9">Total Remaining</text>
+                            <text id="totalCountdown" x="190" y="87" fill="transparent" transform="rotate(90,90,90)" font-size="15" style="fill: white">00:00:00</text>
+                        </g>
+                    </svg>
                     <!-- Timer Buttons -->
-                    <div class="row" style="justify-content: center" id="timerButtons">
-                        <button type="button" id="start">Start</button>
-                        <button type="button" id="pause">Pause</button>
-                        <button type="button" id="stop">Stop</button>
-                        <button type="button" id="clear">Clear</button>
+                    <div class="row" style="justify-content: center; margin-top: 25px" id="timerButtons">
+                        <button type="button" id="start"><i class="fa fa-play"></i></button>
+                        <button type="button" id="pause"><i class="fa fa-pause"></i></button>
+                        <button type="button" id="stop"><i class="fa fa-stop"></i></button>
+                        <button type="button" id="clear"><i class="fa fa-times fa-lg"></i></button>
                     </div>
                 </div>
-                <!-- Task List -->
-                <div class="row">
-                    <ol id="timerTaskList" style="width: 100%">
-                    </ol>
+                <!-- Configure div -->
+                <div class="row-cols-lg-2" id="settings" style="justify-content: center; margin-top: 25px">
+                    <div class="body-content">
+                        <div class="form-group">
+                            <div>
+                                <small class="form-text"><strong>Enter a task name</strong></small>
+                                <input type="text" class="form-control mx-auto align-content-lg-center" id="addTask" />
+                            </div>
+                            <div>
+                                <small class="form-text"><strong>Enter a task duration (minutes)</strong></small>
+                                <input type="number" class="form-control mx-auto align-content-lg-center" id="addTaskDuration" />
+                            </div>
+                            <div style="text-align: center">
+                                <button id="task" style="margin-top: 15px">Add Task</button>
+                            </div>
+
+                            <div id="csvDiv">
+                                <br />
+                                <button id="exportToCSV">Export CSV</button>
+                                <input type="file" name="importCSV" id="importCSV" accept=".csv" hidden />
+                                <label for="importCSV" id="importLabel">Import CSV</label>
+                                <!-- Alerts -->
+                                <div class="alert alert-light alert-dismissible fade hide" role="alert" id="alert">
+                                    <p id="alertText" style="margin-left: 20%; text-align: center; font-size: 14px; font-weight: bold;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- Configure div -->
-            <div class="col-3" id="settings">
-                <div>
-                    <h2 class="text-center">Configure</h2>
-                </div>
-                <div class="body-content">
-                    <div class="form-group">
-                        <div>
-                            <small class="form-text text-muted"><strong>Enter a task name</strong></small>
-                            <input type="text" class="form-control" id="addTask" />
-                        </div>
-                        <div>
-                            <small class="form-text text-muted"><strong>Enter a task duration (minutes)</strong></small>
-                            <input type="number" class="form-control" id="addTaskDuration" />
-                        </div>
-                        <div style="text-align: center">
-                            <button id="task" style="margin-top: 15px">Add Task</button>
-                        </div>
-                        <div id="csvDiv">
-                            <br />
-                            <button id="exportToCSV">Export CSV</button>
-                            <input type="file" name="importCSV" id="importCSV" accept=".csv" hidden />
-                            <label for="importCSV" id="importLabel">Import CSV</label>
-                        </div>
-                    </div>
+            <!-- Task List -->
+            <div class="col-3" style="margin-top: 50px">
+                <div class="card-group">
+                    <ol class="list-group list-group-flush" id="timerTaskList" style="width: 100%">
+                    </ol>
                 </div>
             </div>
         </div>
     </div>
     <script>
-
-        //back
 
         //Global Variables
         var myTimer;
@@ -181,8 +177,9 @@
                 }
             }
 
-            updateTimerText("#globalCountdown", globalSecondsRemaining);
-            updateTimerText("#taskCountdown", taskSecondsRemaining);
+            //DEBUG1
+            setTimerText("#globalCountdown", globalSecondsRemaining);
+            setTimerText("#taskCountdown", taskSecondsRemaining);
 
             //All tasks completed
             if (globalSecondsRemaining <= 0) {
@@ -241,8 +238,9 @@
                     }
                     taskList[i].textContent = "Task: " + exportInfo[i][0] + " " + exportInfo[i][1] + " minutes";
                 });
-                updateTimerText("#globalCountdown", globalSecondsRemaining);
-                updateTimerText("#taskCountdown", taskSecondsRemaining);
+                //DEBUG1
+                setTimerText("#globalCountdown", globalSecondsRemaining);
+                setTimerText("#taskCountdown", taskSecondsRemaining);
             }
             document.getElementById("start").disabled = false;
         }
