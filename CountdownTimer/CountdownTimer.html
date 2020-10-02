@@ -288,7 +288,9 @@
         function addTask(task, minutes) {
             // input check
             if (IsNullOrWhiteSpace(task) || IsNullOrWhiteSpace(minutes) || minutes === '0') {
-                window.alert("You cannot have an empty task name or duration.");
+                // Shows error message if task name or duration is empty.
+                document.getElementById('alertText').textContent = "Empty name or duration.";
+                $("#alert").addClass('show').fadeTo(2000, 500).slideUp(500);
             } else {
                 //Add <h3> Sub Task title if one doesn't already exist.
                 if (!document.getElementById("currentTasks")) {
@@ -374,11 +376,14 @@
         function importCSV() {
             const reader = new FileReader();
             const input = document.querySelector('input[type="file"]');
-
             reader.readAsText(input.files[0]);
             reader.onload = function () {
                 parseCSV(reader.result);
             }
+
+            // Show importCSV success notification
+            document.getElementById('alertText').textContent = "Imported CSV file.";
+            $("#alert").addClass('show').fadeTo(2000, 500).slideUp(500);
         }
 
         /* Parses the imported CSV file passed on by importCSV(), calls addTask(task, minutes) for each task
@@ -408,13 +413,9 @@
         function exportCSV() {
             // if csv info is empty, dont download
             if (exportInfo.length === 0) {
-                // show alert
-                $("#emptyCSVAlert").addClass('show');
-                // auto close alert
-                $("#emptyCSVAlert").fadeTo(2000, 500).slideUp(500,
-                    function () {
-                        $("#ClearCSVAlert").slideUp(500);
-                    });
+                //show empty CSV cache error.
+                document.getElementById('alertText').textContent = "Nothing to export!";
+                $("#alert").addClass('show').fadeTo(2000, 500).slideUp(500);
             } else {
                 // csv string to build upon, starts with title
                 let csv = "placeholder,taskName,minutes\n";
@@ -425,11 +426,15 @@
                 });
 
                 // create download link for csv file
-                var hiddenElement = document.createElement('a');
+                const hiddenElement = document.createElement('a');
                 hiddenElement.href = 'data:text/csv;charset=utf-8' + encodeURI(csv);
                 hiddenElement.target = "_blank";
                 hiddenElement.download = 'data.csv';
                 hiddenElement.click();
+
+                //Show exportCSV success notification.
+                document.getElementById('alertText').textContent = "Downloaded CSV file.";
+                $("#alert").addClass('show').fadeTo(2000, 500).slideUp(500);
             }
         }
 
