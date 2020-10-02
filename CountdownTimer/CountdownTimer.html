@@ -7,9 +7,8 @@
     <link href="Content/bootstrap.css" rel="stylesheet" />
     <link href="Content/Site.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Raleway" />
-
-    <link href="Content/font-awesome.css" rel="stylesheet" />
-    <link href="Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="Content/fontawesome-all.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="#">
 
     <script src="Scripts/jquery-3.5.1.js"></script>
     <script src="Scripts/popper.js"></script>
@@ -53,10 +52,10 @@
                     </svg>
                     <!-- Timer Buttons -->
                     <div class="row" style="justify-content: center; margin-top: 25px" id="timerButtons">
-                        <button type="button" id="start"><i class="fa fa-play"></i></button>
-                        <button type="button" id="pause"><i class="fa fa-pause"></i></button>
-                        <button type="button" id="stop"><i class="fa fa-stop"></i></button>
-                        <button type="button" id="clear"><i class="fa fa-times fa-lg"></i></button>
+                        <button type="button" id="start"><i class="fas fa-play"></i></button>
+                        <button type="button" id="pause"><i class="fas fa-pause"></i></button>
+                        <button type="button" id="stop"><i class="fas fa-stop"></i></button>
+                        <button type="button" id="clear"><i class="fas fa-times fa-lg"></i></button>
                     </div>
                 </div>
                 <!-- Configuration div -->
@@ -64,11 +63,11 @@
                     <div class="body-content">
                         <div class="form-group">
                             <div>
-                                <small class="form-text"><strong>Enter a task name</strong></small>
-                                <input type="text" class="form-control mx-auto align-content-lg-center" id="addTask" />
+                                <small class="form-text" style="margin-bottom: 5px"><strong>Enter a task name</strong></small>
+                                <input type="text" style="margin-bottom: 10px" class="form-control mx-auto align-content-lg-center" id="addTask" />
                             </div>
                             <div>
-                                <small class="form-text"><strong>Enter a task duration (minutes)</strong></small>
+                                <small class="form-text" style="margin-bottom: 5px"><strong>Enter a task duration (minutes)</strong></small>
                                 <input type="number" class="form-control mx-auto align-content-lg-center" id="addTaskDuration" />
                             </div>
                             <div style="text-align: center">
@@ -90,7 +89,7 @@
                 </div>
             </div>
             <!-- Task List -->
-            <div class="col-3" style="margin-top: 50px">
+            <div class="col-3" style="margin-top: 60px">
                 <div class="card-group">
                     <ol class="list-group list-group-flush" id="timerTaskList" style="width: 100%">
                     </ol>
@@ -156,6 +155,13 @@
                 return;
 
             if (paused) {
+                const currentTask = document.getElementsByTagName('li')[taskTracker];
+                const icon = currentTask.querySelector('div').querySelector('.icon').querySelector('.fas');
+
+                $(icon).removeClass();
+                $(icon).addClass('fas fa-play').css('color', 'violet');
+                currentTask.setAttribute('style', 'background-color:#404040 !important');
+
                 document.getElementById("pause").classList.remove('pressed');
             }
 
@@ -177,6 +183,9 @@
             }
 
             if (globalSeconds === globalSecondsRemaining && typeof (currentTask) != "undefined") {
+                const icon = currentTask.querySelector('div').querySelector('.icon').querySelector('.fas');
+                $(icon).removeClass();
+                $(icon).addClass('fas fa-play').css('color', 'violet');
                 currentTask.setAttribute('style', 'background-color:#404040 !important');
             }
 
@@ -189,23 +198,31 @@
 
             //Completed task
             if (currentTask.getAttribute('minutes') * 60 === taskSecondsCompleted) {
+
                 currentTask.setAttribute('style', 'background-color: #1a1a1a !important');
                 currentTask.setAttribute('style', 'color: #a6a6a6 !important');
                 currentTask.setAttribute('complete', 'true');
                 currentTask.setAttribute('active', 'false');
-                currentTask.textContent += " - Complete";
+
+                const icon = currentTask.querySelector('div').querySelector('.icon').querySelector('.fas');
+
+                $(icon).removeClass();
+                $(icon).addClass('fas fa-check').css('color', 'cyan');
+
                 taskSecondsCompleted = 0;
                 taskTracker++;
 
                 //Sets the task timer to the next task (if there is one)
                 if (typeof (nextTask) != "undefined") {
-                    nextTask.setAttribute('style', 'background-color:#404040 !important;');
+                    const nextIcon = nextTask.querySelector('div').querySelector('.icon').querySelector('.fas');
+
+                    $(nextIcon).removeClass();
+                    $(nextIcon).addClass('fas fa-play').css('color', 'violet');
+
                     taskSeconds = nextTask.getAttribute('minutes') * 60;
                     taskSecondsRemaining = taskSeconds;
-
                 }
             }
-
             setTimerText("#totalCountdown", globalSecondsRemaining);
             setTimerText("#taskCountdown", taskSecondsRemaining);
 
@@ -216,6 +233,7 @@
                 started = false;
                 taskSeconds = 0;
                 taskSecondsRemaining = 0;
+                document.getElementById("start").classList.remove('pressed');
             }
         }
 
@@ -230,6 +248,12 @@
             document.getElementById("start").disabled = false;
             document.getElementById("start").classList.remove('pressed');
             document.getElementById("pause").classList.add('pressed');
+
+            const currentTask = document.getElementsByTagName('li')[taskTracker];
+            const icon = currentTask.children[0].querySelector('.icon').querySelector('.fas');
+
+            $(icon).removeClass();
+            $(icon).addClass('fas fa-pause').css('color', 'violet');
         }
 
         /* Resets the timer to default values without deleting any tasks */
@@ -267,9 +291,15 @@
                     if (taskList[i].getAttribute('active') === 'true') {
                         taskList[i].setAttribute('active', 'false');
                     }
-                    taskList[i].textContent = "Task: " + exportInfo[i][0] + " " + exportInfo[i][1] + " minutes";
+                    const icon = taskList[i].querySelector('div').querySelector('.icon').querySelector('.fas');
+
+                    $(icon).removeClass();
+                    $(icon).addClass('fas fa-stop').css('color', 'orangered');
+
                     taskList[i].setAttribute('style', 'background-color: #262626 !important');
                     taskList[i].setAttribute('style', 'color: #d9d9d9 !important');
+
+
                 });
                 setTimerText("#totalCountdown", globalSecondsRemaining);
                 setTimerText("#taskCountdown", taskSecondsRemaining);
@@ -313,9 +343,16 @@
                 document.getElementById('alertText').textContent = "Empty name or duration.";
                 $("#alert").addClass('show').fadeTo(2000, 500).slideUp(500);
             } else {
-                //Add <h3> Sub Task title if one doesn't already exist.
+                // Add Task List title if one doesn't already exist.
                 if (!document.getElementById("currentTasks")) {
-                    $('<h3>').addClass('text-center').attr('id', 'currentTasks').text("Sub Tasks").appendTo("#timerTaskList");
+                    const container = $('<div>');
+
+                    $('<strong>').attr('id', 'currentTasks')
+                        .css('font-size', '1.25rem').text("Task List").appendTo(container);
+
+                    container.css('background-color', '#333333').css('margin-bottom', '10px')
+                        .css('padding-bottom', '2%').css('padding-top', '2%')
+                        .css('border', '2px solid #1a1a1a').appendTo("#timerTaskList");
                 }
 
                 globalSeconds += minutes * 60;
@@ -332,12 +369,22 @@
                 backupArray.push([task, minutes]);
 
                 //Append to 'timerTaskList'.
-                $('<li>').addClass('list-group-item list-group-item-action')
-                    .attr('id', 'listItem')
-                    .text("Task: " + task + " " + minutes + " minutes").attr('draggable', 'true')
-                    .attr('minutes', minutes).attr('complete', 'false').attr('active', 'false')
-                    .appendTo("#timerTaskList");
+                const listItem = $('<li>');
+                const div = $('<div>');
+                const icon = $('<p>');
 
+                listItem.addClass('list-group-item').attr('id', 'listItem')
+                    .attr('complete', 'false').attr('active', 'false')
+                    .attr('minutes', minutes).attr('draggable', 'true');
+                div.css('height', '1.1em').appendTo(listItem);
+
+                $('<p>').addClass('list-text').css('font-size', 20).css('float', 'left').text(task).appendTo(div);
+                $('<i>').addClass("fas fa-stop").appendTo(icon);
+                icon.addClass('icon').css('color', 'orangered').css('float', 'right').css('margin-left', '20px').appendTo(div);
+                $('<p>').addClass('list-text').css('color', '#bfbfbf').css('float', 'right').text(minutes + " Minutes").appendTo(div);
+                listItem.appendTo("#timerTaskList");
+
+                //Reset input text-box
                 $("#addTask").val("");
                 $("#addTaskDuration").val(0);
 
@@ -402,6 +449,7 @@
                 parseCSV(reader.result);
             }
 
+            document.getElementById("importCSV").value = "";
             // Show importCSV success notification
             document.getElementById('alertText').textContent = "Imported CSV file.";
             $("#alert").addClass('show').fadeTo(2000, 500).slideUp(500);
@@ -411,11 +459,6 @@
          specified in the CSV file */
 
         function parseCSV(data) {
-            // Add <h3> Sub Task title if one doesn't already exist.
-            if (!document.getElementById("currentTasks")) {
-                $('<h3>').addClass('text-center').attr('id', 'currentTasks').text("Sub Tasks").appendTo("#timerTaskList");
-            }
-
             //Split the string, store in array, pop the last element (empty string), and splice the first two elements (headers).
             const dataArray = data.replace(/\n/g, ",").split(",");
             dataArray.pop();
