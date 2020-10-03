@@ -22,6 +22,27 @@ body {
     padding-right: 25px;
 }
 
+#timerTaskList {
+    overflow: auto;
+    margin-bottom: 0;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #262626;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333333;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #404040;
+}
+
 div {
     text-align: center;
 }

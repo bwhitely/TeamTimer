@@ -90,8 +90,8 @@
             <!-- Task List -->
             <div class="col-3" style="margin-top: 60px">
                 <div class="card-group">
-                    <ol class="list-group list-group-flush" id="timerTaskList" style="width: 100%">
-                    </ol>
+                    <div display="none" style="width: 100%;" id="taskListHeading"></div>
+                    <ol class="list-group list-group-flush" id="timerTaskList" style="width: 100%"></ol>
                 </div>
             </div>
         </div>
@@ -316,7 +316,8 @@
             exportInfo = [];
             backupArray = [];
 
-            $("#timerTaskList").empty();
+            $('#timerTaskList').empty();
+            $('#taskListHeading').empty().css('display', 'none');
 
             resetTimerText("#totalTime");
             resetTimerText("#totalCountdown");
@@ -367,16 +368,20 @@
             minutes = removeLeadingZeros(minutes);
 
             if (isValidInput(task, minutes)) {
+
                 // Add Task List title if one doesn't already exist.
                 if (!document.getElementById("currentTasks")) {
-                    const container = $('<div>');
+                    //Set the height of the taskList based on the window size, this allows a scroll bar to appear automatically if the list overflows.
+                    $('#timerTaskList').height($(window).height() * 0.66);
+
+                    const container = $('#taskListHeading');
 
                     $('<strong>').attr('id', 'currentTasks')
                         .css('font-size', '1.25rem').text("Task List").appendTo(container);
 
                     container.css('background-color', '#333333').css('margin-bottom', '10px')
                         .css('padding-bottom', '2%').css('padding-top', '2%')
-                        .css('border', '2px solid #1a1a1a').appendTo("#timerTaskList");
+                        .css('border', '2px solid #1a1a1a').css('display', 'block');
                 }
 
                 globalSeconds += minutes * 60;
@@ -391,7 +396,7 @@
                 //Add to ExportCSV array
                 exportInfo.push([task, minutes]);
 
-                //Append to 'timerTaskList'.
+                //Append to '#timerTaskList'.
                 const listItem = $('<li>');
                 const div = $('<div>');
                 const icon = $('<p>');
@@ -399,7 +404,7 @@
                 listItem.addClass('list-group-item').attr('id', 'listItem')
                     .attr('complete', 'false').attr('active', 'false')
                     .attr('minutes', minutes).attr('draggable', 'true');
-                div.css('height', '1.1em').appendTo(listItem);
+                div.appendTo(listItem);
 
                 $('<p>').addClass('list-text').css('font-size', 20).css('float', 'left').text(task).appendTo(div);
                 $('<i>').addClass("fas fa-stop").appendTo(icon);
