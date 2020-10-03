@@ -119,6 +119,7 @@
         var allTasksCompleted = false;
 
         const circumference = 2 * Math.PI * document.getElementById("circle").getAttribute('r');
+        const taskCompletionAudio = new Audio("/Sounds/taskComplete.wav");
 
         //Event Handlers
         //Task/Timer
@@ -189,7 +190,6 @@
                 $(icon).addClass('fas fa-play').css('color', 'violet');
 
             }
-
             globalSecondsCompleted++;
             globalSecondsRemaining--;
             taskSecondsCompleted++;
@@ -207,6 +207,8 @@
 
                 $(icon).removeClass();
                 $(icon).addClass('fas fa-check').css('color', 'cyan');
+                taskCompletionAudio.currentTime = 0;
+                taskCompletionAudio.play();
 
                 taskSecondsCompleted = 0;
                 taskTracker++;
@@ -344,7 +346,7 @@
                 $("#alert").addClass('show').css('color', 'orangered').fadeTo(2000, 500).slideUp(500);
                 return false;
             }
-            if (IsNullOrWhiteSpace(minutes)) {
+            if (minutes < 0 || IsNullOrWhiteSpace(minutes) || !Number.isInteger((minutes * 60))) {
                 document.getElementById('alertText').textContent = "Duration must be a valid number greater than 0.";
                 $("#alert").addClass('show').css('color', 'orangered').fadeTo(2000, 500).slideUp(500);
                 return false;
@@ -368,7 +370,6 @@
             minutes = removeLeadingZeros(minutes);
 
             if (isValidInput(task, minutes)) {
-
                 // Add Task List title if one doesn't already exist.
                 if (!document.getElementById("currentTasks")) {
                     //Set the height of the taskList based on the window size, this allows a scroll bar to appear automatically if the list overflows.
@@ -383,7 +384,6 @@
                         .css('padding-bottom', '2%').css('padding-top', '2%')
                         .css('border', '2px solid #1a1a1a').css('display', 'block');
                 }
-
                 globalSeconds += minutes * 60;
                 globalSecondsRemaining += minutes * 60;
 
