@@ -59,7 +59,7 @@ svg {
     transform: rotate(-90deg);
 }
 
-.circle_animation {
+.circle-animation {
     stroke-dasharray: 865.383112358; /* this value is the pixel circumference of the circle */
     stroke-dashoffset: 865.383112358;
 }
